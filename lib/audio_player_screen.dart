@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:file_picker/file_picker.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class AudioPlayerScreen extends StatefulWidget {
+  const AudioPlayerScreen({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<AudioPlayerScreen> createState() => _AudioPlayerScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
   final player = AudioPlayer();
   Duration position = Duration.zero;
   Duration? duration;
@@ -31,35 +32,38 @@ class _HomeState extends State<Home> {
     player.seek(Duration(seconds: value.toInt()));
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _setupAudio();
-  }
+  Future<void> selectFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+    );
 
-  Future<void> _setupAudio() async {
-    try {
-      await player.setAsset('assets/Cant Stop.mp3');
-      player.positionStream.listen((p) {
-        setState(() => position = p);
-      });
-
-      player.durationStream.listen((d) {
-        setState(() => duration = d);
-      });
-
-      player.playerStateStream.listen((state) {
-        if (state.processingState == ProcessingState.completed) {
-          setState(() {
-            position = Duration.zero;
+    if (result != null) {
+      String? filePath = result.files.single.path;
+      if (filePath != null) {
+        try {
+          await player.setFilePath(filePath);
+          player.positionStream.listen((p) {
+            setState(() => position = p);
           });
-          player.pause();
-          player.seek(position);
+
+          player.durationStream.listen((d) {
+            setState(() => duration = d);
+          });
+
+          player.playerStateStream.listen((state) {
+            if (state.processingState == ProcessingState.completed) {
+              setState(() {
+                position = Duration.zero;
+              });
+              player.pause();
+              player.seek(position);
+            }
+          });
+        } catch (e) {
+          // Handle error gracefully
+          print("Error loading audio: $e");
         }
-      });
-    } catch (e) {
-      // Handle error gracefully
-      print("Error loading audio: $e");
+      }
     }
   }
 
@@ -92,6 +96,10 @@ class _HomeState extends State<Home> {
             IconButton(
               icon: Icon(player.playing ? Icons.pause : Icons.play_arrow),
               onPressed: handlePlayPause,
+            ),
+            ElevatedButton(
+              onPressed: selectFile,
+              child: const Text('Select Audio File'),
             ),
           ],
         ),

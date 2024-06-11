@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home.dart'; // Ensure your Home widget is in home.dart
+import 'audio_player_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Audio Player',
+      title: 'Flutter Audio Player',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Home(),
+      home: const AudioPlayerScreen(),
     );
   }
 }
