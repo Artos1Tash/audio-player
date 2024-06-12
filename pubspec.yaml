@@ -16,11 +16,20 @@ dependencies:
   just_audio: ^0.9.37
   file_picker: ^8.0.4
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
 
   flutter_lints: ^3.0.0
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+
 
 flutter:
 
@@ -28,3 +37,4 @@ flutter:
 
   assets:
     - assets/Cant Stop.mp3
+
